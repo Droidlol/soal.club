@@ -94,26 +94,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function uploadToGoFile(file, randomString, fileExt) {
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('token', 'lrOjbbunRT2PHnMqmoCUlEYPJrW5XIok'); // Your GoFile API token
         
-        // First get a server from GoFile API
-        fetch('https://api.gofile.io/getServer', {
-            method: 'GET'
-        })
-        .then(response => response.json())
-        .then(serverData => {
-            if (!serverData.success) {
-                throw new Error('Could not get upload server');
-            }
-            
-            // Get the assigned server and create upload URL
-            const server = serverData.data.server;
-            const uploadUrl = `https://${server}.gofile.io/uploadFile`;
-            
-            // Upload the file to the server
-            return fetch(uploadUrl, {
-                method: 'POST',
-                body: formData
-            });
+        // Upload directly to GoFile using the current API
+        fetch('https://upload.gofile.io/uploadFile', {
+            method: 'POST',
+            body: formData
         })
         .then(response => response.json())
         .then(data => {
@@ -124,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Get the link to the file
                 const fileUrl = data.data.downloadPage;
                 
-                // Set the link
+                // Set the link - modern GoFile uses shorter URLs
                 fileLink.value = fileUrl;
                 
                 // Show embed info for videos

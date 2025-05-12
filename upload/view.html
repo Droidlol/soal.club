@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View File - soal.club</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7fff7;
+            color: #292f36;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-image: url('paw-pattern.png');
+        }
+        .container {
+            max-width: 900px;
+            width: 90%;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        img, video {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #ff6b6b;
+            margin-bottom: 1.5rem;
+        }
+        .footer {
+            margin-top: 2rem;
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.8rem 1.5rem;
+            background-color: #4ecdc4;
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background-color: #3bafa5;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+        }
+        .error-container {
+            display: none;
+            text-align: center;
+        }
+        .error-container h2 {
+            color: #ff6b6b;
+        }
+        .error-container p {
+            margin-bottom: 2rem;
+        }
+        .cat-decoration {
+            position: absolute;
+            width: 100px;
+            z-index: 0;
+        }
+        .cat-decoration-1 {
+            top: 20px;
+            right: -30px;
+            transform: rotate(15deg);
+        }
+        .cat-decoration-2 {
+            bottom: 20px;
+            left: -20px;
+            transform: rotate(-10deg);
+        }
+        .media-container {
+            position: relative;
+            z-index: 1;
+            margin: 2rem auto;
+        }
+        .copy-link {
+            display: flex;
+            max-width: 500px;
+            margin: 1rem auto;
+        }
+        .copy-link input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid #4ecdc4;
+            border-radius: 8px 0 0 8px;
+            font-size: 1rem;
+            outline: none;
+        }
+        .copy-link button {
+            background-color: #4ecdc4;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .copy-link button:hover {
+            background-color: #3bafa5;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container" id="media-container">
+        <h1>soal.club <span class="cat-emoji">🐱</span></h1>
+        
+        <div class="media-container" id="file-display">
+            <!-- Media will be inserted here -->
+        </div>
+        
+        <div class="copy-link">
+            <input type="text" id="page-url" readonly>
+            <button id="copy-button">
+                <i class="fas fa-copy"></i>
+            </button>
+        </div>
+        
+        <div class="footer">
+            <p>Uploaded via soal.club uploader</p>
+            <a href="index.html" class="btn">Upload Another File</a>
+        </div>
+        
+        <div class="cat-decoration cat-decoration-1">
+            <img src="cat2.gif" alt="Decorative cat">
+        </div>
+        <div class="cat-decoration cat-decoration-2">
+            <img src="cat3.gif" alt="Decorative cat">
+        </div>
+    </div>
+    
+    <div class="container error-container" id="error-container">
+        <h2>File Not Found <span class="cat-emoji">😿</span></h2>
+        <p>The file you're looking for doesn't exist or has been removed.</p>
+        <a href="index.html" class="btn">Go to Uploader</a>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mediaContainer = document.getElementById('media-container');
+            const errorContainer = document.getElementById('error-container');
+            const fileDisplay = document.getElementById('file-display');
+            const pageUrl = document.getElementById('page-url');
+            const copyButton = document.getElementById('copy-button');
+            
+            // Get current URL and file parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const fileName = urlParams.get('file');
+            
+            // Set the page URL for sharing
+            pageUrl.value = window.location.href;
+            
+            // Copy URL to clipboard
+            copyButton.addEventListener('click', () => {
+                pageUrl.select();
+                document.execCommand('copy');
+                
+                // Visual feedback
+                copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                }, 2000);
+            });
+            
+            // Load file from localStorage
+            if (fileName) {
+                const fileKey = `soal_file_${fileName}`;
+                const fileJson = localStorage.getItem(fileKey);
+                
+                if (fileJson) {
+                    try {
+                        const fileInfo = JSON.parse(fileJson);
+                        displayFile(fileInfo);
+                    } catch (error) {
+                        console.error('Error parsing file data:', error);
+                        showError();
+                    }
+                } else {
+                    showError();
+                }
+            } else {
+                showError();
+            }
+            
+            // Function to display the file
+            function displayFile(fileInfo) {
+                // Create appropriate element based on file type
+                if (fileInfo.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = fileInfo.data;
+                    img.alt = fileInfo.name;
+                    fileDisplay.appendChild(img);
+                    
+                    // Set page title
+                    document.title = `${fileInfo.name} - soal.club`;
+                    
+                } else if (fileInfo.type.startsWith('video/')) {
+                    const video = document.createElement('video');
+                    video.controls = true;
+                    video.autoplay = false;
+                    video.muted = true;
+                    
+                    const source = document.createElement('source');
+                    source.src = fileInfo.data;
+                    source.type = fileInfo.type;
+                    
+                    video.appendChild(source);
+                    fileDisplay.appendChild(video);
+                    
+                    // Set page title
+                    document.title = `${fileInfo.name} - soal.club`;
+                    
+                    // Add notice about Discord embedding
+                    const embedNotice = document.createElement('p');
+                    embedNotice.style.color = '#ff9f1c';
+                    embedNotice.style.marginTop = '0.5rem';
+                    embedNotice.innerHTML = '<i class="fab fa-discord"></i> This video will auto-embed on Discord!';
+                    fileDisplay.appendChild(embedNotice);
+                } else {
+                    showError();
+                }
+            }
+            
+            // Function to show error message
+            function showError() {
+                mediaContainer.style.display = 'none';
+                errorContainer.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

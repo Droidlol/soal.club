@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>soal.club - Young Developer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <div class="logo">soal.club</div>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="upload/" class="btn-special">File Uploader</a></li>
+            </ul>
+        </nav>
+
+        <header class="hero">
+            <div class="hero-content">
+                <h1>Hey, I'm <span class="highlight">soal</span> 👋</h1>
+                <p class="subtitle">15-year-old developer & digital creator</p>
+                <div class="cta-buttons">
+                    <a href="#projects" class="btn-primary">My Projects</a>
+                    <a href="#contact" class="btn-secondary">Get In Touch</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="code-snippet">
+                    <pre><code>
+<span class="comment">// Welcome to my website!</span>
+<span class="keyword">function</span> <span class="function">sayHello</span>() {
+    <span class="keyword">const</span> languages = [
+        <span class="string">"C++"</span>,
+        <span class="string">"Lua"</span>,
+        <span class="string">"JavaScript"</span>,
+        <span class="string">"Python"</span>
+    ];
+    
+    <span class="keyword">return</span> <span class="string">`Building cool stuff with 
+    ${languages.join(', ')}!`</span>;
+}
+
+<span class="function">sayHello</span>();
+                    </code></pre>
+                </div>
+            </div>
+        </header>
+
+        <section id="about" class="about-section">
+            <h2>About Me</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>I'm a 15-year-old developer with a passion for coding and building cool digital projects. When I'm not in school, you'll find me experimenting with new technologies and working on personal projects.</p>
+                    <p>I started coding when I was 12 and quickly fell in love with the process of turning ideas into reality through code. I enjoy both frontend and backend development, and I'm constantly learning new technologies to expand my skill set.</p>
+                    <p>Besides coding, I enjoy playing video games, listening to music, and hanging out with friends. I'm always open to collaborating on interesting projects!</p>
+                </div>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number">15</div>
+                        <div class="stat-label">Years Old</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">4+</div>
+                        <div class="stat-label">Languages</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">3+</div>
+                        <div class="stat-label">Years Coding</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="skills-section">
+            <h2>My Skills</h2>
+            <div class="skills-container">
+                <div class="skill-card">
+                    <i class="fab fa-cpp skill-icon"></i>
+                    <h3>C++</h3>
+                    <div class="skill-level">
+                        <div class="skill-progress" style="width: 85%;"></div>
+                    </div>
+                    <p>Game development & algorithms</p>
+                </div>
+                <div class="skill-card">
+                    <i class="fab fa-lua skill-icon">Lua</i>
+                    <h3>Lua</h3>
+                    <div class="skill-level">
+                        <div class="skill-progress" style="width: 90%;"></div>
+                    </div>
+                    <p>Game modding & scripting</p>
+                </div>
+                <div class="skill-card">
+                    <i class="fab fa-js skill-icon"></i>
+                    <h3>JavaScript</h3>
+                    <div class="skill-level">
+                        <div class="skill-progress" style="width: 80%;"></div>
+                    </div>
+                    <p>Web apps & interactive sites</p>
+                </div>
+                <div class="skill-card">
+                    <i class="fab fa-python skill-icon"></i>
+                    <h3>Python</h3>
+                    <div class="skill-level">
+                        <div class="skill-progress" style="width: 75%;"></div>
+                    </div>
+                    <p>Automation & data analysis</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="projects-section">
+            <h2>My Projects</h2>
+            <div class="projects-container">
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="project1.png" alt="File Uploader">
+                    </div>
+                    <div class="project-info">
+                        <h3>soal.club Uploader</h3>
+                        <p>A fun, cat-themed file uploader that generates shareable links for images and videos.</p>
+                        <div class="project-tags">
+                            <span>HTML</span>
+                            <span>CSS</span>
+                            <span>JavaScript</span>
+                        </div>
+                        <a href="upload/" class="project-link">Try it out</a>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="project2.png" alt="Game Project">
+                    </div>
+                    <div class="project-info">
+                        <h3>Mini Game Engine</h3>
+                        <p>A lightweight 2D game engine built with C++ and OpenGL for creating simple games.</p>
+                        <div class="project-tags">
+                            <span>C++</span>
+                            <span>OpenGL</span>
+                        </div>
+                        <a href="#" class="project-link">View Project</a>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="project3.png" alt="Discord Bot">
+                    </div>
+                    <div class="project-info">
+                        <h3>Discord Bot</h3>
+                        <p>A multipurpose Discord bot built with Python for moderation, games, and music.</p>
+                        <div class="project-tags">
+                            <span>Python</span>
+                            <span>Discord.py</span>
+                        </div>
+                        <a href="#" class="project-link">View Project</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section">
+            <h2>Get In Touch</h2>
+            <p class="contact-intro">Have a question or want to work together? Feel free to reach out!</p>
+            <div class="contact-methods">
+                <a href="mailto:contact@soal.club" class="contact-method">
+                    <i class="fas fa-envelope"></i>
+                    <span>contact@soal.club</span>
+                </a>
+                <a href="https://discord.gg/example" class="contact-method">
+                    <i class="fab fa-discord"></i>
+                    <span>soal#1234</span>
+                </a>
+                <a href="https://github.com/" class="contact-method">
+                    <i class="fab fa-github"></i>
+                    <span>github.com/soalclub</span>
+                </a>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-logo">soal.club</div>
+                <p class="footer-tagline">Building digital experiences, one line at a time.</p>
+                <div class="footer-links">
+                    <a href="#about">About</a>
+                    <a href="#skills">Skills</a>
+                    <a href="#projects">Projects</a>
+                    <a href="#contact">Contact</a>
+                    <a href="upload/">File Uploader</a>
+                </div>
+                <p class="copyright">© 2025 soal.club • Crafted by a 15-year-old developer</p>
+            </div>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -78,49 +78,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Loading screen is already visible at this point
 
-        // Create a FormData object for the PHP upload
-        const formData = new FormData();
-        formData.append('file', file);
+        // Process file client-side since GitHub Pages doesn't support server-side code
+        const reader = new FileReader();
         
-        // Send the file to the PHP backend
-        fetch('upload.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Upload failed: ' + response.statusText);
+        reader.onload = function(e) {
+            try {
+                // Generate a random filename
+                const randomString = generateRandomString(8);
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${randomString}.${fileExt}`;
+                
+                // Store file in localStorage
+                const fileData = {
+                    name: fileName,
+                    originalName: file.name,
+                    type: file.type,
+                    data: e.target.result,
+                    date: new Date().toISOString(),
+                    size: file.size
+                };
+                
+                // Save to localStorage
+                localStorage.setItem(`soal_file_${fileName}`, JSON.stringify(fileData));
+                
+                // Create a sharing URL
+                // GitHub Pages base URL + view.html with the file parameter
+                const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
+                const shareUrl = `${baseUrl}view.html?file=${fileName}`;
+                
+                // Create file preview
+                createPreview(file);
+                
+                // Set the link
+                fileLink.value = shareUrl;
+                
+                // Show embed info for videos
+                if (file.type.match('video.*')) {
+                    embedInfo.style.display = 'block';
+                } else {
+                    embedInfo.style.display = 'none';
+                }
+                
+                // Hide loading and show result
+                loadingScreen.style.display = 'none';
+                uploadArea.style.display = 'none';
+                resultContainer.style.display = 'block';
+            } catch (error) {
+                console.error('Storage error:', error);
+                alert('Error saving file. The file might be too large for browser storage.');
+                loadingScreen.style.display = 'none';
             }
-            return response.json();
-        })
-        .then(data => {
-            if (!data.success) {
-                throw new Error(data.message || 'Upload failed');
-            }
-            
-            // Create file preview
-            createPreview(file);
-            
-            // Set the link from the server response
-            fileLink.value = data.fileUrl;
-            
-            // Show embed info for videos
-            if (file.type.match('video.*')) {
-                embedInfo.style.display = 'block';
-            } else {
-                embedInfo.style.display = 'none';
-            }
-            
-            // Hide loading and show result
+        };
+        
+        reader.onerror = function() {
+            console.error('File reading error');
+            alert('Error reading file. Please try again.');
             loadingScreen.style.display = 'none';
-            uploadArea.style.display = 'none';
-            resultContainer.style.display = 'block';
-        })
-        .catch(error => {
-            console.error('Upload error:', error);
-            alert('Upload failed: ' + error.message);
-            loadingScreen.style.display = 'none';
-        });
+        };
+        
+        // Read file as data URL
+        reader.readAsDataURL(file);
     }
 
     // Create preview of uploaded file

@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View File - soal.club</title>
+    <!-- Open Graph Meta Tags for Discord embedding -->
+    <meta property="og:title" content="soal.club file" id="og-title">
+    <meta property="og:type" content="website" id="og-type">
+    <meta property="og:image" content="" id="og-image">
+    <meta property="og:url" content="" id="og-url">
+    <meta property="og:description" content="View this file on soal.club uploader" id="og-description">
+    <meta property="og:site_name" content="soal.club">
+    <meta name="theme-color" content="#ff6b6b">
+    
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -39,6 +48,11 @@
         h1 {
             color: #ff6b6b;
             margin-bottom: 1.5rem;
+        }
+        .file-info {
+            font-size: 0.9rem;
+            color: #636e72;
+            margin-bottom: 1rem;
         }
         .footer {
             margin-top: 2rem;
@@ -116,6 +130,30 @@
         .copy-link button:hover {
             background-color: #3bafa5;
         }
+        .discord-embed {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.6rem 1.2rem;
+            background-color: #5865F2;
+            color: white;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+        .discord-embed i {
+            margin-right: 0.5rem;
+        }
+        .file-size {
+            margin-left: 1rem;
+            color: #636e72;
+        }
+        .download-btn {
+            margin-top: 1rem;
+            background-color: #ff9f1c;
+        }
+        .download-btn:hover {
+            background-color: #f39200;
+            box-shadow: 0 5px 15px rgba(255, 159, 28, 0.3);
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -123,9 +161,15 @@
     <div class="container" id="media-container">
         <h1>soal.club <span class="cat-emoji">🐱</span></h1>
         
+        <div class="file-info" id="file-info">
+            <!-- File info will go here -->
+        </div>
+        
         <div class="media-container" id="file-display">
             <!-- Media will be inserted here -->
         </div>
+        
+        <div id="discord-notice"></div>
         
         <div class="copy-link">
             <input type="text" id="page-url" readonly>
@@ -133,6 +177,10 @@
                 <i class="fas fa-copy"></i>
             </button>
         </div>
+        
+        <button id="download-btn" class="btn download-btn" style="display: none;">
+            <i class="fas fa-download"></i> Download File
+        </button>
         
         <div class="footer">
             <p>Uploaded via soal.club uploader</p>
@@ -149,7 +197,7 @@
     
     <div class="container error-container" id="error-container">
         <h2>File Not Found <span class="cat-emoji">😿</span></h2>
-        <p>The file you're looking for doesn't exist or has been removed.</p>
+        <p>The file you're looking for doesn't exist or has been removed. Files are stored in your browser's local storage, so they will only be available on this device and browser.</p>
         <a href="index.html" class="btn">Go to Uploader</a>
     </div>
     
@@ -158,8 +206,11 @@
             const mediaContainer = document.getElementById('media-container');
             const errorContainer = document.getElementById('error-container');
             const fileDisplay = document.getElementById('file-display');
+            const fileInfo = document.getElementById('file-info');
+            const discordNotice = document.getElementById('discord-notice');
             const pageUrl = document.getElementById('page-url');
             const copyButton = document.getElementById('copy-button');
+            const downloadBtn = document.getElementById('download-btn');
             
             // Get current URL and file parameter
             const urlParams = new URLSearchParams(window.location.search);
@@ -167,6 +218,9 @@
             
             // Set the page URL for sharing
             pageUrl.value = window.location.href;
+            
+            // Update metadata for Discord embedding
+            document.getElementById('og-url').content = window.location.href;
             
             // Copy URL to clipboard
             copyButton.addEventListener('click', () => {
@@ -179,6 +233,20 @@
                     copyButton.innerHTML = '<i class="fas fa-copy"></i>';
                 }, 2000);
             });
+            
+            // Format file size
+            function formatFileSize(bytes) {
+                const units = ['B', 'KB', 'MB', 'GB'];
+                let size = bytes;
+                let unitIndex = 0;
+                
+                while (size > 1024 && unitIndex < units.length - 1) {
+                    size /= 1024;
+                    unitIndex++;
+                }
+                
+                return `${size.toFixed(1)} ${units[unitIndex]}`;
+            }
             
             // Load file from localStorage
             if (fileName) {
@@ -201,42 +269,80 @@
             }
             
             // Function to display the file
-            function displayFile(fileInfo) {
+            function displayFile(fileData) {
+                // Set page title
+                document.title = `${fileData.name} - soal.club`;
+                
+                // Update Open Graph meta tags for Discord
+                document.getElementById('og-title').content = `${fileData.name} - soal.club`;
+                
+                // Show file info
+                fileInfo.innerHTML = `
+                    <span><i class="fas fa-file"></i> ${fileData.originalName || fileData.name}</span>
+                    <span class="file-size"><i class="fas fa-weight-hanging"></i> ${formatFileSize(fileData.size)}</span>
+                `;
+                
                 // Create appropriate element based on file type
-                if (fileInfo.type.startsWith('image/')) {
+                if (fileData.type.startsWith('image/')) {
+                    // It's an image
                     const img = document.createElement('img');
-                    img.src = fileInfo.data;
-                    img.alt = fileInfo.name;
+                    img.src = fileData.data;
+                    img.alt = fileData.name;
                     fileDisplay.appendChild(img);
                     
-                    // Set page title
-                    document.title = `${fileInfo.name} - soal.club`;
+                    // Update OG image for Discord
+                    document.getElementById('og-type').content = 'image';
+                    document.getElementById('og-image').content = fileData.data;
+                    document.getElementById('og-description').content = 'View this image on soal.club';
                     
-                } else if (fileInfo.type.startsWith('video/')) {
+                    // Show Discord notice
+                    discordNotice.innerHTML = `
+                        <div class="discord-embed">
+                            <i class="fab fa-discord"></i> This image will auto-embed on Discord!
+                        </div>
+                    `;
+                    
+                } else if (fileData.type.startsWith('video/')) {
+                    // It's a video
                     const video = document.createElement('video');
                     video.controls = true;
                     video.autoplay = false;
                     video.muted = true;
                     
                     const source = document.createElement('source');
-                    source.src = fileInfo.data;
-                    source.type = fileInfo.type;
+                    source.src = fileData.data;
+                    source.type = fileData.type;
                     
                     video.appendChild(source);
                     fileDisplay.appendChild(video);
                     
-                    // Set page title
-                    document.title = `${fileInfo.name} - soal.club`;
+                    // Update OG video for Discord
+                    document.getElementById('og-type').content = 'video';
+                    // Discord won't embed data URLs for video directly, but it will try to preview the page
+                    document.getElementById('og-description').content = 'View this video on soal.club (click to play)';
                     
-                    // Add notice about Discord embedding
-                    const embedNotice = document.createElement('p');
-                    embedNotice.style.color = '#ff9f1c';
-                    embedNotice.style.marginTop = '0.5rem';
-                    embedNotice.innerHTML = '<i class="fab fa-discord"></i> This video will auto-embed on Discord!';
-                    fileDisplay.appendChild(embedNotice);
+                    // Show Discord notice
+                    discordNotice.innerHTML = `
+                        <div class="discord-embed">
+                            <i class="fab fa-discord"></i> This video will show a preview on Discord!
+                        </div>
+                    `;
                 } else {
-                    showError();
+                    // Unsupported file type
+                    fileDisplay.innerHTML = `<p>This file type cannot be previewed directly.</p>`;
                 }
+                
+                // Enable download button
+                downloadBtn.style.display = 'inline-block';
+                downloadBtn.addEventListener('click', () => {
+                    // Create download link
+                    const a = document.createElement('a');
+                    a.href = fileData.data;
+                    a.download = fileData.originalName || fileData.name;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                });
             }
             
             // Function to show error message

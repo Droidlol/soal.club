@@ -78,39 +78,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Loading screen is already visible at this point
 
-        // Process file client-side since GitHub Pages doesn't support server-side code
-        const reader = new FileReader();
+        // Use GoFile for all file types
+        // Generate random string for filename
+        const randomString = generateRandomString(8);
+        const fileExt = file.name.split('.').pop().toLowerCase();
         
-        reader.onload = function(e) {
-            try {
-                // Generate a random filename
-                const randomString = generateRandomString(8);
-                const fileExt = file.name.split('.').pop();
-                const fileName = `${randomString}.${fileExt}`;
-                
-                // Store file in localStorage
-                const fileData = {
-                    name: fileName,
-                    originalName: file.name,
-                    type: file.type,
-                    data: e.target.result,
-                    date: new Date().toISOString(),
-                    size: file.size
-                };
-                
-                // Save to localStorage
-                localStorage.setItem(`soal_file_${fileName}`, JSON.stringify(fileData));
-                
-                // Create a sharing URL
-                // GitHub Pages base URL + view.html with the file parameter
-                const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
-                const shareUrl = `${baseUrl}view.html?file=${fileName}`;
-                
+        // Show loading screen
+        loadingScreen.style.display = 'flex';
+        
+        // Upload the file to GoFile
+        uploadToGoFile(file, randomString, fileExt);
+    }
+    
+    // Function to upload files to GoFile
+    function uploadToGoFile(file, randomString, fileExt) {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        // First get a server from GoFile API
+        fetch('https://api.gofile.io/getServer', {
+            method: 'GET'
+        })
+        .then(response => response.json())
+        .then(serverData => {
+            if (!serverData.success) {
+                throw new Error('Could not get upload server');
+            }
+            
+            // Get the assigned server and create upload URL
+            const server = serverData.data.server;
+            const uploadUrl = `https://${server}.gofile.io/uploadFile`;
+            
+            // Upload the file to the server
+            return fetch(uploadUrl, {
+                method: 'POST',
+                body: formData
+            });
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
                 // Create file preview
                 createPreview(file);
                 
+                // Get the link to the file
+                const fileUrl = data.data.downloadPage;
+                
                 // Set the link
-                fileLink.value = shareUrl;
+                fileLink.value = fileUrl;
                 
                 // Show embed info for videos
                 if (file.type.match('video.*')) {
@@ -119,25 +134,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     embedInfo.style.display = 'none';
                 }
                 
+                // Store minimal info in localStorage just for the preview
+                const fileInfo = {
+                    name: `${randomString}.${fileExt}`,
+                    originalName: file.name,
+                    type: file.type,
+                    displayUrl: fileUrl,
+                    size: file.size
+                };
+                localStorage.setItem(`soal_file_info_${randomString}`, JSON.stringify(fileInfo));
+                
                 // Hide loading and show result
                 loadingScreen.style.display = 'none';
                 uploadArea.style.display = 'none';
                 resultContainer.style.display = 'block';
-            } catch (error) {
-                console.error('Storage error:', error);
-                alert('Error saving file. The file might be too large for browser storage.');
-                loadingScreen.style.display = 'none';
+            } else {
+                throw new Error('Upload failed: ' + (data.error || 'Unknown error'));
             }
-        };
-        
-        reader.onerror = function() {
-            console.error('File reading error');
-            alert('Error reading file. Please try again.');
+        })
+        .catch(error => {
+            console.error('Upload error:', error);
+            alert('Failed to upload the file. Please try again or try a smaller file.');
             loadingScreen.style.display = 'none';
-        };
-        
-        // Read file as data URL
-        reader.readAsDataURL(file);
+        });
     }
 
     // Create preview of uploaded file

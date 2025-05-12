@@ -6,12 +6,16 @@
     <title>View File - soal.club</title>
     <!-- Open Graph Meta Tags for Discord embedding -->
     <meta property="og:title" content="soal.club file" id="og-title">
-    <meta property="og:type" content="website" id="og-type">
-    <meta property="og:image" content="" id="og-image">
+    <meta property="og:type" content="website">
+    <!-- Use a placeholder image that's guaranteed to work with Discord -->
+    <meta property="og:image" content="https://i.imgur.com/3NtPuAv.png"> <!-- Cat image for Discord preview -->
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:url" content="" id="og-url">
     <meta property="og:description" content="View this file on soal.club uploader" id="og-description">
     <meta property="og:site_name" content="soal.club">
     <meta name="theme-color" content="#ff6b6b">
+    <meta property="twitter:card" content="summary_large_image">
     
     <style>
         body {
@@ -290,10 +294,8 @@
                     img.alt = fileData.name;
                     fileDisplay.appendChild(img);
                     
-                    // Update OG image for Discord
-                    document.getElementById('og-type').content = 'image';
-                    document.getElementById('og-image').content = fileData.data;
-                    document.getElementById('og-description').content = 'View this image on soal.club';
+                    // Update description for Discord
+                    document.getElementById('og-description').content = `View this image "${fileData.originalName || fileData.name}" on soal.club`;
                     
                     // Show Discord notice
                     discordNotice.innerHTML = `
@@ -316,10 +318,8 @@
                     video.appendChild(source);
                     fileDisplay.appendChild(video);
                     
-                    // Update OG video for Discord
-                    document.getElementById('og-type').content = 'video';
-                    // Discord won't embed data URLs for video directly, but it will try to preview the page
-                    document.getElementById('og-description').content = 'View this video on soal.club (click to play)';
+                    // Update description for Discord
+                    document.getElementById('og-description').content = `View this video "${fileData.originalName || fileData.name}" on soal.club`;
                     
                     // Show Discord notice
                     discordNotice.innerHTML = `

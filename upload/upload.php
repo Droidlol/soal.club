@@ -6,7 +6,7 @@ header("Access-Control-Allow-Headers: *");
 
 // Configure upload settings
 $uploadDir = 'files/'; // Directory where files will be stored
-$maxFileSize = 50 * 1024 * 1024; // 50MB max file size
+$maxFileSize = 25 * 1024 * 1024; // 25MB max file size
 
 // Create the upload directory if it doesn't exist
 if (!file_exists($uploadDir)) {
